@@ -1,0 +1,32 @@
+# セキュリティヘッダーの設定
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "DENY"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    Header set Referrer-Policy "no-referrer"
+    Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>
+
+# ディレクトリリスティングの無効化
+Options -Indexes
+
+# 重要なファイルへのアクセス制限
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# PHPエラーの非表示
+php_flag display_errors off
+
+# HTTPSへのリダイレクト
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# 特定のファイルタイプへのアクセス制限
+<FilesMatch "\.(htaccess|htpasswd|ini|log|sh|inc|bak)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch> 
